@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:title="menu" android:icon="@drawable/ic_format_list_bulleted_black_24dp" android:id="@+id/list_item" app:showAsAction="always" >
+        <menu>
+            <item
+                android:id="@+id/displayHousees"
+                android:title="Все дома" />
+
+            <!--Список квартир, имеющих заданное число комнат-->
+            <item
+                android:id="@+id/rooms"
+                android:title="По комнатам" />
+
+            <!--Список квартир, имеющих заданное число комнат и расположенных на этаже, который находится в заданном промежутке-->
+            <item
+                android:id="@+id/roomsAndFloor"
+                android:title="По этажу и комнатам" />
+
+            <!--Список квартир, имеющих площадь превосходящую заданную-->
+            <item
+                android:id="@+id/square"
+                android:title="По площади" />
+        </menu>
+    </item>
+
+    <item android:title="addHouse" android:icon="@drawable/ic_action_add_house" android:id="@+id/add_item" app:showAsAction="always" />
+</menu>
