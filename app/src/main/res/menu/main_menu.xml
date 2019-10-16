@@ -25,4 +25,15 @@
     </item>
 
     <item android:title="addHouse" android:icon="@drawable/ic_action_add_house" android:id="@+id/add_item" app:showAsAction="always" />
+
+    <item android:title="fromFile" android:icon="@drawable/ic_from_file_foreground" android:id="@+id/fromFile" app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/openFile"
+                android:title="Открыть файл" />
+            <item
+                android:id="@+id/saveFile"
+                android:title="Сохранить в файл" />
+        </menu>
+    </item>
 </menu>

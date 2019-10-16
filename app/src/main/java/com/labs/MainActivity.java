@@ -8,7 +8,6 @@ import android.view.View;
 
 import com.labs.lab1.FirstLabActivity;
 import com.labs.lab2.SecondLabActivity;
-import com.labs.lab3.ThirdLabActivity;
 import com.labs.lab4.FouthLabActivity;
 import com.labs.lab5.FifthLabActivity;
 import com.labs.lab6.SixLabActivity;
@@ -34,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void displayLab3(View view){
-        Intent intent = new Intent(this, ThirdLabActivity.class);
+        Intent intent = new Intent(this, SecondLabActivity.class);
         startActivity(intent);
     }
 

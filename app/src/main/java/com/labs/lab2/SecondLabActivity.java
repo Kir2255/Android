@@ -5,35 +5,38 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Layout;
-import android.util.Log;
-import android.view.LayoutInflater;
+
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.accessibility.AccessibilityManager;
-import android.widget.Button;
+
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.labs.R;
+import com.labs.lab2.House;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
-import java.util.zip.Inflater;
+import java.util.regex.Pattern;
+
 
 public class SecondLabActivity extends AppCompatActivity {
 
     private AlertDialog currentDialog;
     private List<House> houses = new ArrayList<>();
     private List<TextView> textViews = new ArrayList<>();
+
+    private final static String FILE_PATH = "data.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +54,7 @@ public class SecondLabActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        switch (id){
+        switch (id) {
             case R.id.add_item:
                 final View view = this.getLayoutInflater().inflate(R.layout.add_menu, null);
                 currentDialog = new AlertDialog.Builder(this)
@@ -116,20 +119,26 @@ public class SecondLabActivity extends AppCompatActivity {
                         .create();
                 currentDialog.show();
                 break;
+            case R.id.openFile:
+                readFromFile();
+                break;
+            case R.id.saveFile:
+                saveToFile();
+                break;
         }
         return true;
     }
 
     public void addHouse(View view) {
         List<String> temp = new ArrayList<>(7);
-        
-        temp.add(((EditText)view.findViewById(R.id.editNumber)).getText().toString());
-        temp.add(((EditText)view.findViewById(R.id.editSquare)).getText().toString());
-        temp.add(((EditText)view.findViewById(R.id.editFloor)).getText().toString());
-        temp.add(((EditText)view.findViewById(R.id.editRoom)).getText().toString());
-        temp.add(((EditText)view.findViewById(R.id.editStreet)).getText().toString());
-        temp.add(((EditText)view.findViewById(R.id.editType)).getText().toString());
-        temp.add(((EditText)view.findViewById(R.id.editLifetime)).getText().toString());
+
+        temp.add(((EditText) view.findViewById(R.id.editNumber)).getText().toString());
+        temp.add(((EditText) view.findViewById(R.id.editSquare)).getText().toString());
+        temp.add(((EditText) view.findViewById(R.id.editFloor)).getText().toString());
+        temp.add(((EditText) view.findViewById(R.id.editRoom)).getText().toString());
+        temp.add(((EditText) view.findViewById(R.id.editStreet)).getText().toString());
+        temp.add(((EditText) view.findViewById(R.id.editType)).getText().toString());
+        temp.add(((EditText) view.findViewById(R.id.editLifetime)).getText().toString());
 
         try {
             houses.add(new House(Integer.parseInt(temp.get(0)), Double.parseDouble(temp.get(1)),
@@ -138,15 +147,15 @@ public class SecondLabActivity extends AppCompatActivity {
         } catch (NumberFormatException e) {
             e.printStackTrace();
 
-            Toast.makeText(this, "Ошибка!!!", Toast.LENGTH_SHORT ).show();
+            Toast.makeText(this, "Ошибка!!!", Toast.LENGTH_SHORT).show();
             return;
         }
         currentDialog.dismiss();
 
-        Toast.makeText(this, "Запись успешно добавлена", Toast.LENGTH_SHORT ).show();
+        Toast.makeText(this, "Запись успешно добавлена", Toast.LENGTH_SHORT).show();
     }
 
-    public void displayByRooms(View view){
+    public void displayByRooms(View view) {
         LinearLayout linearLayout = findViewById(R.id.display);
         linearLayout.removeAllViews();
 
@@ -156,7 +165,7 @@ public class SecondLabActivity extends AppCompatActivity {
         display(linearLayout, temp);
     }
 
-    public void displayByRoomsAndFloor(View view){
+    public void displayByRoomsAndFloor(View view) {
         LinearLayout linearLayout = findViewById(R.id.display);
         linearLayout.removeAllViews();
 
@@ -164,19 +173,19 @@ public class SecondLabActivity extends AppCompatActivity {
         EditText leftFloor = view.findViewById(R.id.editFloorByLeft);
         EditText rightFloor = view.findViewById(R.id.editFloorByRight);
 
-        int left =Integer.parseInt(leftFloor.getText().toString());
+        int left = Integer.parseInt(leftFloor.getText().toString());
         int right = Integer.parseInt(rightFloor.getText().toString());
 
-        if (left < right){
-            List<House> temp = new House().RoomsAndFloor(houses, Integer.parseInt(editText.getText().toString()),left, right );
+        if (left < right) {
+            List<House> temp = new House().RoomsAndFloor(houses, Integer.parseInt(editText.getText().toString()), left, right);
             display(linearLayout, temp);
-        }else {
+        } else {
             Toast.makeText(this, "Ошибка!!! Левая граница должна быть больше прваной!!!", Toast.LENGTH_SHORT).show();
         }
 
     }
 
-    public void  displayBySquare(View view){
+    public void displayBySquare(View view) {
         LinearLayout linearLayout = findViewById(R.id.display);
         linearLayout.removeAllViews();
 
@@ -187,8 +196,8 @@ public class SecondLabActivity extends AppCompatActivity {
     }
 
 
-    private void display(LinearLayout linearLayout, List<House> temp){
-        for(House house : temp){
+    private void display(LinearLayout linearLayout, List<House> temp) {
+        for (House house : temp) {
             TextView textView = new TextView(this);
             textView.setText(house.toString());
             textViews.add(textView);
@@ -197,4 +206,68 @@ public class SecondLabActivity extends AppCompatActivity {
             linearLayout.addView(textView);
         }
     }
+
+    private void readFromFile() {
+        try (FileInputStream fis = openFileInput(FILE_PATH)) {
+            byte[] bytes = new byte[fis.available()];
+            fis.read(bytes);
+            String text = new String(bytes);
+
+            List<String> data = textParsing(text);
+
+            /*for (String str : data) {
+                TextView textView = new TextView(this);
+                textView.setText(str);
+                LinearLayout linearLayout = findViewById(R.id.display);
+                linearLayout.addView((textView));
+            }*/
+            //Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void saveToFile() {
+
+        try (FileOutputStream fos = openFileOutput(FILE_PATH, MODE_PRIVATE)) {
+            if (houses.size() != 0) {
+                for (House house : houses) {
+                    try {
+                        fos.write(house.toString().getBytes());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Toast.makeText(this, "Данные сохранены", Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private List<String> textParsing(String text) {
+        Pattern pattern = Pattern.compile("[=]");
+        List<String> result = Arrays.asList(pattern.split(text.replaceAll(" ", "")));
+
+        /*result.remove("HouseID");
+        result.remove("FlatNumber");
+        result.remove("Square");
+        result.remove("Floor");
+        result.remove("NumberOfRooms");
+        result.remove("Street");
+        result.remove("BuildType");
+        result.remove("Lifetime");
+
+       /* for (int i = 0; i < result.size(); i += 8){
+            result.remove(i);
+        }*/
+
+
+        int a = result.size();
+        Toast.makeText(this, Integer.toString(a), Toast.LENGTH_SHORT).show();
+        return result;
+    }
+
+
 }
