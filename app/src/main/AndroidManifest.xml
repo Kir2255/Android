@@ -14,7 +14,6 @@
         <activity android:name=".lab6.SixLabActivity" />
         <activity android:name=".lab5.FifthLabActivity" />
         <activity android:name=".lab4.FouthLabActivity" />
-        <activity android:name=".lab3.ThirdLabActivity" />
         <activity android:name=".lab2.SecondLabActivity" />
         <activity android:name=".lab1.FirstLabActivity" />
         <activity android:name=".MainActivity">

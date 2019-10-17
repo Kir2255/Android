@@ -18,10 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.labs.R;
-import com.labs.lab2.House;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -141,9 +139,7 @@ public class SecondLabActivity extends AppCompatActivity {
         temp.add(((EditText) view.findViewById(R.id.editLifetime)).getText().toString());
 
         try {
-            houses.add(new House(Integer.parseInt(temp.get(0)), Double.parseDouble(temp.get(1)),
-                    Integer.parseInt(temp.get(2)), Integer.parseInt(temp.get(3)), temp.get(4),
-                    temp.get(5), Double.parseDouble(temp.get(6))));
+            houses.add(newHouse(temp, 0));
         } catch (NumberFormatException e) {
             e.printStackTrace();
 
@@ -214,26 +210,31 @@ public class SecondLabActivity extends AppCompatActivity {
             String text = new String(bytes);
 
             List<String> data = textParsing(text);
+            try {
+                for (int i = 0; i < data.size(); i +=7){
+                    houses.add(newHouse(data, i));
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
-            /*for (String str : data) {
-                TextView textView = new TextView(this);
-                textView.setText(str);
-                LinearLayout linearLayout = findViewById(R.id.display);
-                linearLayout.addView((textView));
-            }*/
-            //Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Данные успешно загружены", Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
     private void saveToFile() {
-
         try (FileOutputStream fos = openFileOutput(FILE_PATH, MODE_PRIVATE)) {
             if (houses.size() != 0) {
                 for (House house : houses) {
                     try {
-                        fos.write(house.toString().getBytes());
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append(house.getFlatNumber() + "," + house.getSquare() + "," +
+                                house.getFloor() + "," + house.getNumberOfrooms() + "," +
+                                house.getStreet() + "," + house.getBuildType() + "," +
+                                house.getLifetime() + "\n");
+                        fos.write(stringBuilder.toString().getBytes());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -247,27 +248,16 @@ public class SecondLabActivity extends AppCompatActivity {
     }
 
     private List<String> textParsing(String text) {
-        Pattern pattern = Pattern.compile("[=]");
+        Pattern pattern = Pattern.compile("[,]");
         List<String> result = Arrays.asList(pattern.split(text.replaceAll(" ", "")));
 
-        /*result.remove("HouseID");
-        result.remove("FlatNumber");
-        result.remove("Square");
-        result.remove("Floor");
-        result.remove("NumberOfRooms");
-        result.remove("Street");
-        result.remove("BuildType");
-        result.remove("Lifetime");
-
-       /* for (int i = 0; i < result.size(); i += 8){
-            result.remove(i);
-        }*/
-
-
-        int a = result.size();
-        Toast.makeText(this, Integer.toString(a), Toast.LENGTH_SHORT).show();
         return result;
     }
 
+    private House newHouse(List<String> temp, int i){
+        return new House(Integer.parseInt(temp.get(i)), Double.parseDouble(temp.get(i+1)),
+                Integer.parseInt(temp.get(i+2)), Integer.parseInt(temp.get(i+3)), temp.get(i+4),
+                temp.get(i+5), Double.parseDouble(temp.get(i+6)));
+    }
 
 }
