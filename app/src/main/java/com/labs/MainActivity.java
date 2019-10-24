@@ -1,14 +1,14 @@
 package com.labs;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.labs.lab1.FirstLabActivity;
 import com.labs.lab2.SecondLabActivity;
-import com.labs.lab4.FouthLabActivity;
+import com.labs.lab4.SignInActivity;
 import com.labs.lab5.FifthLabActivity;
 import com.labs.lab6.SixLabActivity;
 import com.labs.lab7.SevensLabActivity;
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void displayLab4(View view){
-        Intent intent = new Intent(this, FouthLabActivity.class);
+        Intent intent = new Intent(this, SignInActivity.class);
         startActivity(intent);
     }
 

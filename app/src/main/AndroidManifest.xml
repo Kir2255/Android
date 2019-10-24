@@ -9,11 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".lab4.SignOutActivity"></activity>
         <activity android:name=".lab8.EightsLabActivity" />
         <activity android:name=".lab7.SevensLabActivity" />
         <activity android:name=".lab6.SixLabActivity" />
         <activity android:name=".lab5.FifthLabActivity" />
-        <activity android:name=".lab4.FouthLabActivity" />
+        <activity android:name=".lab4.SignInActivity" />
         <activity android:name=".lab2.SecondLabActivity" />
         <activity android:name=".lab1.FirstLabActivity" />
         <activity android:name=".MainActivity">
