@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.labs.MainActivity;
@@ -22,6 +24,7 @@ public class SignOutActivity extends AppCompatActivity {
     public static final String GOOGLE_ACCOUNT = "google_account";
     private TextView profileName, profileEmail;
     private Button signOut;
+    private GoogleSignInClient googleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +37,12 @@ public class SignOutActivity extends AppCompatActivity {
 
         setDataOnView();
 
-        /*signOut.setOnClickListener(new View.OnClickListener() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        googleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        signOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 googleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -47,7 +55,7 @@ public class SignOutActivity extends AppCompatActivity {
                     }
                 });
             }
-        });*/
+        });
     }
 
     private void setDataOnView() {
