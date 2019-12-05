@@ -10,71 +10,47 @@ import android.widget.Toast;
 
 import com.labs.R;
 
-public class FifthLabActivity extends AppCompatActivity {
+public class FifthLabActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private EditText emailEditText;
-    private EditText topicEditText;
-    private EditText messageEditText;
+    private EditText editTextEmail;
+    private EditText editTextSubject;
+    private EditText editTextMessage;
 
+    //Send button
+    private Button buttonSend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fifth_lab);
 
-        emailEditText = findViewById(R.id.emailEditText);
-        topicEditText = findViewById(R.id.topicEditText);
-        messageEditText = findViewById(R.id.messageEditText);
+        //Initializing the views
+        editTextEmail = (EditText) findViewById(R.id.emailEditText);
+        editTextSubject = (EditText) findViewById(R.id.topicEditText);
+        editTextMessage = (EditText) findViewById(R.id.messageEditText);
 
-        Button sendButton = findViewById(R.id.sendButton);
-        sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                send();
-            }
-        });
+        buttonSend = (Button) findViewById(R.id.sendButton);
 
-        Button clearButton = findViewById(R.id.clearButton);
-        clearButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clearFields();
-            }
-        });
+        //Adding click listener
+        buttonSend.setOnClickListener(this);
     }
 
-    private void send() {
-        final String email = emailEditText.getText().toString().trim();
-        final String theme = topicEditText.getText().toString().trim();
-        final String text = messageEditText.getText().toString().trim();
-        if (!email.equals("") && !theme.equals("") && !text.equals("")) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    MessageSender emailSender = new MessageSender(email, theme);
-                    emailSender.sendMessage(text);
-                    onSuccess();
-                }
-            }).start();
-        } else {
-            Toast.makeText(this, "Пожалуйста заполните поля!", Toast.LENGTH_SHORT).show();
-        }
+    private void sendEmail() {
+        //Getting content for email
+        String email = editTextEmail.getText().toString().trim();
+        String subject = editTextSubject.getText().toString().trim();
+        String message = editTextMessage.getText().toString().trim();
+
+        //Creating SendMail object
+        SendMail sm = new SendMail(this, email, subject, message);
+
+        //Executing sendmail to send email
+        sm.execute();
     }
 
-    private void clearFields() {
-        emailEditText.setText("");
-        topicEditText.setText("");
-        messageEditText.setText("");
-    }
-
-    private void onSuccess() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(FifthLabActivity.this, "Письмо отправлено", Toast.LENGTH_SHORT).show();
-                clearFields();
-            }
-        });
+    @Override
+    public void onClick(View v) {
+        sendEmail();
     }
 
 }
